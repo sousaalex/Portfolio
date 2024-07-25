@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .bg-fiber-carbon {
+    background: rgba(40, 40, 40, 0.5); /* Fundo com semi-transparência */
+    backdrop-filter: blur(10px); /* Aplica desfoque ao conteúdo atrás do fundo */
+    -webkit-backdrop-filter: blur(10px); /* Suporte para navegadores baseados no WebKit */
+}
+
+}
+
+/* Altera a cor da barra de rolagem */
+::-webkit-scrollbar {
+  width: 10px; /* largura da barra de rolagem */
+}
+
+/* Altera a cor de fundo da barra de rolagem */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* cor de fundo */
+}
+
+/* Altera a cor da "thumb" (a parte móvel da barra de rolagem) */
+::-webkit-scrollbar-thumb {
+  background-color: #22d3ee; /* cor da thumb */
+  border-radius: 5px; /* borda arredondada */
+}
+
+/* Opção: altera a cor quando hover sobre a barra de rolagem */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #22d3ee; /* cor ao passar o mouse */
+}
