@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,9 +9,86 @@ import {
   AiOutlineMail,
   AiOutlinePhone,
   AiOutlineEnvironment,
-} from "react-icons/ai"; // Importando os ícones correspondentes do react-icons
+} from "react-icons/ai";
 
 export default function Contact() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageSent, setMessageSent] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const websocketRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!name || !email || !message) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setMessageSent(false); // Resetar o estado antes de enviar
+
+      if (
+        websocketRef.current &&
+        websocketRef.current.readyState === WebSocket.OPEN
+      ) {
+        // Conexão já aberta, podemos enviar diretamente
+        const data = { name, email, message };
+        websocketRef.current.send(JSON.stringify(data));
+      } else {
+        // Conexão fechada ou não existe, reabrir
+        websocketRef.current = new WebSocket("wss://portfolio-send-email-lively-hill-8362.fly.dev");
+
+        websocketRef.current.onopen = () => {
+          const data = { name, email, message };
+          websocketRef.current.send(JSON.stringify(data));
+        };
+      }
+
+      websocketRef.current.onmessage = () => {
+        // Adicione um manipulador onmessage
+        setMessageSent(true);
+        setError(null);
+        clearForm();
+        setIsLoading(false);
+        // Aguarda 5 segundos e redefine messageSent
+        setTimeout(() => {
+          setMessageSent(false);
+        }, 5000); // 5000 milissegundos = 5 segundos
+
+        setIsLoading(false);
+      };
+
+      websocketRef.current.onerror = (error) => {
+        console.error("Erro no WebSocket:", error);
+        setError("An error occurred while sending the message.");
+        setIsLoading(false);
+      };
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      setError("An unexpected error occurred.");
+      setIsLoading(false);
+    }
+  };
+
+  const clearForm = () => {
+    setName("");
+    setEmail("");
+    setMessage("");
+  };
+
   return (
     <section id="contact" className="py-16 bg-muted">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -21,55 +100,50 @@ export default function Contact() {
               Feel free to reach out to me for any inquiries or collaboration
               opportunities.
             </p>
-            <form className="max-w-md mx-auto mt-4 space-y-4 p-6 bg-white shadow-md shadow-gray-500 rounded-lg">
+            <form
+              onSubmit={handleSubmit}
+              className="max-w-md mx-auto mt-4 space-y-4 p-6 bg-white shadow-md shadow-gray-500 rounded-lg"
+            >
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <input
+                <Label htmlFor="name">Name</Label>
+                <Input
                   id="name"
                   type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <input
+                <Label htmlFor="email">Email</Label>
+                <Input
                   id="email"
                   type="email"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                  placeholder="Your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Message
-                </label>
-                <textarea
+                <Label htmlFor="message">Message</Label>
+                <Textarea
                   id="message"
                   rows={4}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                  placeholder="Your message"
-                ></textarea>
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
               </div>
-              <button
+              <Button
                 type="submit"
-                className="w-full bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600 transition duration-300"
+                className={`w-full bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600 focus:outline-none focus:bg-cyan-600 transition duration-300 ${
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={isLoading}
               >
-                Send Message
-              </button>
+                {isLoading ? "Enviando..." : "Send Message"}
+              </Button>
+              {messageSent && (
+                <p className="text-green-500">Message sent successfully!</p>
+              )}
+              {error && <p style={{ color: "red" }}>{error}</p>}
             </form>
           </div>
           <div>

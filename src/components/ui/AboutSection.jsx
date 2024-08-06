@@ -31,32 +31,32 @@ export default function AboutSection() {
               </p>
             </div> */}
               <div>
-                <h3 class="font-semibold">Web Developer Intern</h3>
-                <p class="text-muted-foreground">
+                <h3 className="font-semibold">Web Developer Intern</h3>
+                <p className="text-muted-foreground">
                   I worked as a Web Developer Intern at Icognit Cloud.
                 </p>
-                <p class="mt-2 text-muted-foreground">
+                <p className="mt-2 text-muted-foreground">
                   I contributed to the development of responsive websites, gaining hands-on experience in web development.
                   I worked with ServiceNow
                 </p>
               </div>
               <div>
-                <h3 class="font-semibold">Web Developer Intern</h3>
-                <p class="text-muted-foreground">
+                <h3 className="font-semibold">Web Developer Intern</h3>
+                <p className="text-muted-foreground">
                   I worked as a Web Developer Intern at 2GF.
                 </p>
-                <p class="mt-2 text-muted-foreground">
+                <p className="mt-2 text-muted-foreground">
                   I worked on two web projects, enhancing my skills in
                   front-end development. I focused on creating
                   efficient and scalable web solutions.
                 </p>
               </div>
               <div>
-                <h3 class="font-semibold">Web Developer Intern</h3>
-                <p class="text-muted-foreground">
+                <h3 className="font-semibold">Web Developer Intern</h3>
+                <p className="text-muted-foreground">
                   I worked as a Web Developer Intern at Softinsa (IBM).
                 </p>
-                <p class="mt-2 text-muted-foreground">
+                <p className="mt-2 text-muted-foreground">
                   I gained valuable experience in the industry, working on
                   large-scale projects. I developed my understanding of best
                   practices in software development.
