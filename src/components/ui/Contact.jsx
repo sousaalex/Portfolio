@@ -138,7 +138,7 @@ export default function Contact() {
                 }`}
                 disabled={isLoading}
               >
-                {isLoading ? "Enviando..." : "Send Message"}
+                {isLoading ? "sending..." : "Send Message"}
               </Button>
               {messageSent && (
                 <p className="text-green-500">Message sent successfully!</p>
